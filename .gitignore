@@ -1,0 +1,4 @@
+build/
+run/*.exe
+run/*.ilk
+run/*.pdb
