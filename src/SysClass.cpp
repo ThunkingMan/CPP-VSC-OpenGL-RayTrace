@@ -1,4 +1,5 @@
 #include "SysClass.h"
+#include <vector>
 
 SysClass::SysClass() {}
 SysClass::SysClass(const SysClass&) {}
@@ -22,7 +23,7 @@ bool SysClass::InitGlfw() {
     GLFWmonitor* PrimaryMonitor = glfwGetPrimaryMonitor(); //Get the primary monitor
     const GLFWvidmode* MonVidMode = glfwGetVideoMode(PrimaryMonitor); //get video mode of primary monitor
     uint16_t UpperLeftX = MonVidMode->width / 2 - m_MainWindowWidth / 2; //Calculate upper left to centre new window
-    uint16_t UpperLeftY = MonVidMode->height /2 - m_MainWindowHeight / 2;
+    uint16_t UpperLeftY = MonVidMode->height / 2 - m_MainWindowHeight / 2;
 
     //Create main window
     m_MainWindow = glfwCreateWindow(m_MainWindowWidth, m_MainWindowHeight, "OpenGL Test", nullptr, nullptr);
@@ -38,5 +39,27 @@ bool SysClass::InitGlfw() {
     glfwSwapInterval(1); //Set Vsync
        
     return true;
+}
+
+void SysClass::CreateQuad() {
+    struct VertexPosTex {
+        glm::vec3 Pos;
+        glm::vec2 Tex;
+        VertexPosTex() {Pos=glm::vec3(0.0f, 0.0f, 0.0f); Tex = glm::vec2(0.0f, 0.0f);}
+        VertexPosTex(glm::vec3 _Pos, glm::vec2 _Tex) {Pos = _Pos; Tex = _Tex;}
+    };
+
+    VertexPosTex Vertex[4] = {
+        VertexPosTex(glm::vec3(-1.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f)), //vert - top left
+        VertexPosTex(glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec2(0.0f, 0.0f)), //vert2 - bottom left
+        VertexPosTex(glm::vec3(1.0f, -1.0f, 0.0f), glm::vec2(1.0f, 0.0f)), //vert3 - Bottom right
+        VertexPosTex(glm::vec3(1.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f)) //vert4 - top right
+    };
+
+    
+
+    
+    
+
 }
 

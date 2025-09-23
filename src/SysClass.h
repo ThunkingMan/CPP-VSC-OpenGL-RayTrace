@@ -16,11 +16,13 @@ public:
 
 private:
     bool InitGlfw();
+    void CreateQuad();
 
     uint16_t m_MainWindowWidth = 1024;
-    uint16_t m_MainWindowHeight = 768;
+    uint16_t m_MainWindowHeight = 1024;
     GLFWwindow* m_MainWindow = nullptr;
     int32_t m_FrameBufferHeight = 0;
     int32_t m_FrameBufferWidth = 0;
+    GLuint m_RenderVAO = 0;
 
 };
