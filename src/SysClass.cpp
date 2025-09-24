@@ -40,26 +40,3 @@ bool SysClass::InitGlfw() {
        
     return true;
 }
-
-void SysClass::CreateQuad() {
-    struct VertexPosTex {
-        glm::vec3 Pos;
-        glm::vec2 Tex;
-        VertexPosTex() {Pos=glm::vec3(0.0f, 0.0f, 0.0f); Tex = glm::vec2(0.0f, 0.0f);}
-        VertexPosTex(glm::vec3 _Pos, glm::vec2 _Tex) {Pos = _Pos; Tex = _Tex;}
-    };
-
-    VertexPosTex Vertex[4] = {
-        VertexPosTex(glm::vec3(-1.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f)), //vert - top left
-        VertexPosTex(glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec2(0.0f, 0.0f)), //vert2 - bottom left
-        VertexPosTex(glm::vec3(1.0f, -1.0f, 0.0f), glm::vec2(1.0f, 0.0f)), //vert3 - Bottom right
-        VertexPosTex(glm::vec3(1.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f)) //vert4 - top right
-    };
-
-    
-
-    
-    
-
-}
-

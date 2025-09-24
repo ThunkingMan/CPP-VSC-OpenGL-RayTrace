@@ -16,8 +16,7 @@ public:
 
 private:
     bool InitGlfw();
-    void CreateQuad();
-
+    
     uint16_t m_MainWindowWidth = 1024;
     uint16_t m_MainWindowHeight = 1024;
     GLFWwindow* m_MainWindow = nullptr;
