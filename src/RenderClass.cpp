@@ -1,5 +1,7 @@
 #include "RenderClass.h"
 #include "glm\glm.hpp"
+#include <fstream>
+#include <sstream>
 
 
 struct VertexPosTex {
@@ -47,6 +49,85 @@ void RenderClass::CreateDisplaySqr() {
 void RenderClass::Render() {
 
 }
+
+std::string RenderClass::LoadFileToString(std::string FileName) {
+    std::ifstream InputFile(FileName, std::ios::in);
+    if (! InputFile.is_open()) {
+        std::printf("Error: Can not open file for conversion to string.\n");
+        return "";       
+    }
+    std::stringstream StringStream;
+    StringStream << InputFile.rdbuf();
+    std::string ReturnString = StringStream.str();
+    InputFile.close();
+    return ReturnString;    
+}
+
+bool RenderClass::CompileShaders() {
+    //Display vert shader
+    std::string VertexGLSLCode = LoadFileToString("shaders\\Render.vert");
+    if (VertexGLSLCode.empty()) {
+        printf("Error: Vertex shader GLSL string is empty.\n");
+        return false;
+    }
+    GLuint VertShaderObj = glCreateShader(GL_VERTEX_SHADER);  //Cretae Shader Object
+    if (VertShaderObj == 0) {
+        printf("Error: Can not create vertex shader object.\n");
+        return false;
+    }
+    const char* VertexShaderCode =  VertexGLSLCode.c_str();
+    glShaderSource(VertShaderObj, 1, &VertexShaderCode, NULL);
+    glCompileShader(VertShaderObj); //Compile shader code nad check success
+    GLint IsSuccess;
+    glGetShaderiv(VertShaderObj, GL_COMPILE_STATUS, &IsSuccess);
+    if (!IsSuccess) {
+        GLchar InfoLog[1024];
+        glGetShaderInfoLog(VertShaderObj, 1024, NULL, InfoLog);
+        printf("Error compiling vertex shader type '%s'\n", InfoLog);
+        return false;
+    }
+    
+    //Display Frag shader
+    std::string FragmentGLSLCode = LoadFileToString("shaders\\Render.frag");  //Load GLSL string from file
+    if (FragmentGLSLCode.empty()) {
+        printf("Error: Fragment shader GLSL string is empty.\n");
+        return false;
+    }
+    GLuint FragShaderObj = glCreateShader(GL_FRAGMENT_SHADER);  //Cretae Shader Object
+    if (FragShaderObj == 0) {
+        printf("Error: Can not create fragment shader object.\n");
+        return false;
+    }
+    const char* FragmentShaderCode =  FragmentGLSLCode.c_str();
+    glShaderSource(FragShaderObj, 1, &FragmentShaderCode, NULL);
+    glCompileShader(FragShaderObj); //Compile shader code nad check success
+    IsSuccess;
+    glGetShaderiv(FragShaderObj, GL_COMPILE_STATUS, &IsSuccess);
+    if (!IsSuccess) {
+        GLchar InfoLog[1024];
+        glGetShaderInfoLog(VertShaderObj, 1024, NULL, InfoLog);
+        printf("Error compiling fragment shader '%s'\n", InfoLog);
+        return false;
+    }
+
+    //Shader progrm
+    GLuint m_ShaderProgram = glCreateProgram();
+    glAttachShader(m_ShaderProgram, VertShaderObj); //Attach shader to program
+    glAttachShader(m_ShaderProgram, FragShaderObj);
+    glLinkProgram(m_ShaderProgram);
+    glGetProgramiv(m_ShaderProgram, GL_LINK_STATUS, &IsSuccess);
+    if (!IsSuccess) {
+        GLchar InfoLog[1024];
+        printf("Error linking shader program: '%s'\n", InfoLog);
+        return false;    
+    }
+    glDeleteShader(VertShaderObj);
+    glDeleteShader(FragShaderObj);
+
+    return true;
+}
+
+
 
 
 

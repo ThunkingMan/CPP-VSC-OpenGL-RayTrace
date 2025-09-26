@@ -6,16 +6,29 @@ SysClass::SysClass(const SysClass&) {}
 SysClass::~SysClass() {}
 
 
-bool Init() {
-    return true;
-}
-
-bool SysClass::InitGlfw() {
+bool SysClass::Init() {
     if (! glfwInit()) {
         std::printf("Error initilising GLFW.\n");
         return false;
     }
+    if (InitGlfwWindow()) {
+        std::printf("Error creating GLFW main window\n");
+        return false;
+    }
+    if (! gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {  //init GLAD
+        std::printf("Error: Initilising GLAD.\n");
+        Shutdown();
+        return false;
+    }
+    //Classes
+    
+    // Game Loop
+    
+    Shutdown();
+    return true;
+}
 
+bool SysClass::InitGlfwWindow() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //core profile
@@ -40,3 +53,9 @@ bool SysClass::InitGlfw() {
        
     return true;
 }
+
+void SysClass::Shutdown() {
+    if (m_MainWindow) glfwDestroyWindow(m_MainWindow);
+    glfwTerminate();
+}
+

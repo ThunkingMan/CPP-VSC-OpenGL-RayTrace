@@ -11,11 +11,11 @@ public:
     SysClass();
     SysClass(const SysClass&);
     ~SysClass();
-
     bool Init();
 
 private:
-    bool InitGlfw();
+    bool InitGlfwWindow();
+    void Shutdown();
     
     uint16_t m_MainWindowWidth = 1024;
     uint16_t m_MainWindowHeight = 1024;
