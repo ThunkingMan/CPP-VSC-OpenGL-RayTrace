@@ -1,5 +1,6 @@
 #include "SysClass.h"
 #include <vector>
+#include <memory>
 
 SysClass::SysClass() {}
 SysClass::SysClass(const SysClass&) {}
@@ -15,18 +16,25 @@ bool SysClass::Init() {
         std::printf("Error creating GLFW main window\n");
         return false;
     }
-    if (! gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {  //init GLAD
-        std::printf("Error: Initilising GLAD.\n");
+    if (! gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        std::printf("Error initilising GLAD.\n");
         Shutdown();
         return false;
     }
+    
     //Classes
+    if(! InitClasses()) {
+        std::printf("Error initilising classes.\n");
+        Shutdown();
+        return false;        
+    }
     
     // Game Loop
     
     Shutdown();
     return true;
 }
+
 
 bool SysClass::InitGlfwWindow() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); 
@@ -57,5 +65,15 @@ bool SysClass::InitGlfwWindow() {
 void SysClass::Shutdown() {
     if (m_MainWindow) glfwDestroyWindow(m_MainWindow);
     glfwTerminate();
+}
+
+bool SysClass::InitClasses() {
+    std::unique_ptr<RenderClass> c_RenderClass = std::make_unique<RenderClass>();
+ 	if (! c_RenderClass)
+	{
+		std::printf("Error creating Render Class.\n");
+     	return false;
+	}
+       
 }
 

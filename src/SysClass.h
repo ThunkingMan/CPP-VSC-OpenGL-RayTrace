@@ -5,6 +5,7 @@
 #include "glad\glad.h"
 #include "glfw3.h"
 #include "glm\glm.hpp"
+#include "RenderClass.h"
 
 class SysClass {
 public:
@@ -16,6 +17,9 @@ public:
 private:
     bool InitGlfwWindow();
     void Shutdown();
+    bool InitClasses();
+
+    std::unique_ptr<RenderClass> c_RenderClass;
     
     uint16_t m_MainWindowWidth = 1024;
     uint16_t m_MainWindowHeight = 1024;
