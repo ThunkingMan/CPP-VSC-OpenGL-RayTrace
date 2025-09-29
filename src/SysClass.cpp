@@ -2,10 +2,17 @@
 #include <vector>
 #include <memory>
 
-SysClass::SysClass() {}
-SysClass::SysClass(const SysClass&) {}
-SysClass::~SysClass() {}
 
+
+void SysClass::Loop() {
+    while (!glfwWindowShouldClose(m_MainWindow))
+    {
+        c_Timer->GetDeltaTime(); //Get time since last frame
+        c_Input->Process(c_Timer->m_FrameDeltaMS); //process input update view.
+        //Render(); //Render
+        glfwPollEvents(); //Poll for and process events
+    }
+}
 
 bool SysClass::Init() {
     if (! glfwInit()) {
@@ -29,12 +36,10 @@ bool SysClass::Init() {
         return false;        
     }
     
-    // Game Loop
-    
+    Loop();
     Shutdown();
     return true;
 }
-
 
 bool SysClass::InitGlfwWindow() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); 
@@ -74,6 +79,23 @@ bool SysClass::InitClasses() {
 		std::printf("Error creating Render Class.\n");
      	return false;
 	}
+    std::unique_ptr<InputClass> c_Input = std::make_unique<InputClass>();
+ 	if (! c_Input)
+	{
+		std::printf("Error creating Input Class.\n");
+     	return false;
+	}
+    std::unique_ptr<TimerClass> c_Timer = std::make_unique<TimerClass>();
+ 	if (! c_Timer)
+	{
+		std::printf("Error creating Timer Class.\n");
+     	return false;
+	}
+       
        
 }
+
+SysClass::SysClass() {}
+SysClass::SysClass(const SysClass&) {}
+SysClass::~SysClass() {}
 

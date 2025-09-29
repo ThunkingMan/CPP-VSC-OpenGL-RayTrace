@@ -6,6 +6,8 @@
 #include "glfw3.h"
 #include "glm\glm.hpp"
 #include "RenderClass.h"
+#include "TimerClass.h"
+#include "InputClass.h"
 
 class SysClass {
 public:
@@ -18,8 +20,11 @@ private:
     bool InitGlfwWindow();
     void Shutdown();
     bool InitClasses();
+    void Loop();
 
     std::unique_ptr<RenderClass> c_RenderClass;
+    std::unique_ptr<TimerClass> c_Timer;
+    std::unique_ptr<InputClass> c_Input;
     
     uint16_t m_MainWindowWidth = 1024;
     uint16_t m_MainWindowHeight = 1024;
