@@ -5,6 +5,7 @@
 #include "glad\glad.h"
 #include "glfw3.h"
 #include "glm\glm.hpp"
+#include <memory>
 #include "RenderClass.h"
 #include "TimerClass.h"
 #include "InputClass.h"
@@ -22,7 +23,7 @@ private:
     bool InitClasses();
     void Loop();
 
-    std::unique_ptr<RenderClass> c_RenderClass;
+    std::unique_ptr<RenderClass> c_Render;
     std::unique_ptr<TimerClass> c_Timer;
     std::unique_ptr<InputClass> c_Input;
     

@@ -1,5 +1,5 @@
 #include "SysClass.h"
-#include <memory>
+ 
 
 int main() {
 	// Create the system object.

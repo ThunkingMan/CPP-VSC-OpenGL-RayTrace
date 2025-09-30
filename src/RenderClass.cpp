@@ -2,6 +2,7 @@
 #include "glm\glm.hpp"
 #include <fstream>
 #include <sstream>
+#include "stb_image.h"
 
 
 struct VertexPosTex {
@@ -16,8 +17,27 @@ RenderClass::RenderClass() {}
 RenderClass::RenderClass(const RenderClass&) {}
 RenderClass::~RenderClass() {}
 
-void RenderClass::Init() {
+void RenderClass::Render() {
+    glUseProgram(m_ShaderProgram);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindVertexArray(m_VAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glfwSwapBuffers(m_MainWindow);
+}
 
+bool RenderClass::Init(GLFWwindow* MainWindow) {
+    m_MainWindow = MainWindow;
+    if(! CompileShaders()) {
+        printf("Error compiling shaders.\n");
+        return false;        
+    }
+    CreateDisplaySqr();
+    if (! LoadTexture()) {
+        printf("Error laoding shaders.\n");
+        return false; 
+    }
+
+    return true;
 }
 
 void RenderClass::CreateDisplaySqr() {
@@ -44,10 +64,6 @@ void RenderClass::CreateDisplaySqr() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO); //bind index buffer
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Index), Index, GL_STATIC_DRAW); //Upload index data
     glBindVertexArray(0); //Unbind VAO;
-}
-
-void RenderClass::Render() {
-
 }
 
 std::string RenderClass::LoadFileToString(std::string FileName) {
@@ -111,7 +127,7 @@ bool RenderClass::CompileShaders() {
     }
 
     //Shader progrm
-    GLuint m_ShaderProgram = glCreateProgram();
+    m_ShaderProgram = glCreateProgram();
     glAttachShader(m_ShaderProgram, VertShaderObj); //Attach shader to program
     glAttachShader(m_ShaderProgram, FragShaderObj);
     glLinkProgram(m_ShaderProgram);
@@ -127,8 +143,27 @@ bool RenderClass::CompileShaders() {
     return true;
 }
 
+bool RenderClass::LoadTexture() {
+    std::string TextureFile = "assets\\wood_container.jpg";
 
-
-
-
+    int TexWidth, TexHeight, TexChannels;
+    unsigned char *TexData = nullptr;
+    TexData = stbi_load(TextureFile.c_str(), &TexWidth, &TexHeight, &TexChannels, 0);
+    if (! TexData) {
+        printf("Error loading texture data from file.\n");
+        return false;    
+    }
+    glGenTextures(1, &m_TestTexture); //Generate texture array
+    glBindTexture(GL_TEXTURE_2D, m_TestTexture); //Bind the texture
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, TexWidth, TexHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, TexData);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    
+    stbi_image_free(TexData); //free the image data loaded from file
+    
+    return true;
+}
 
