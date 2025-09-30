@@ -12,30 +12,45 @@ struct VertexPosTex {
     VertexPosTex(glm::vec3 _Pos, glm::vec2 _Tex) {Pos = _Pos; Tex = _Tex;}
 };
 
-
-RenderClass::RenderClass() {}
-RenderClass::RenderClass(const RenderClass&) {}
-RenderClass::~RenderClass() {}
-
 void RenderClass::Render() {
-    glUseProgram(m_ShaderProgram);
+    //Compute Shader
+    glUseProgram(m_RayProgram);
+    //glActiveTexture(GL_TEXTURE0);
+    //glBindTexture(GL_TEXTURE_2D, m_RayTexture);
+    glDispatchCompute((GLuint)m_RayTextWidth , (GLuint)m_RayTextHeight, 1);
+    glMemoryBarrier(GL_ALL_BARRIER_BITS); // make sure writing to image has finished before read
+    
+    //Render
     glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(m_ShaderProgram);
     glBindVertexArray(m_VAO);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_RayTexture);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glfwSwapBuffers(m_MainWindow);
 }
 
 bool RenderClass::Init(GLFWwindow* MainWindow) {
     m_MainWindow = MainWindow;
-    if(! CompileShaders()) {
-        printf("Error compiling shaders.\n");
-        return false;        
+
+    // if(! CompileShaders()) {
+    //     printf("Error compiling shaders.\n");
+    //     return false;        
+    // }
+
+    if (! CompileRayShader()) {
+        printf("Error compiling compute shader.\n");
+        return false;      
     }
+
+    LoadRaytexture();
+
     CreateDisplaySqr();
-    if (! LoadTexture()) {
-        printf("Error laoding shaders.\n");
-        return false; 
-    }
+    
+    // if (! LoadTestTexture()) {
+    //     printf("Error loading shaders.\n");
+    //     return false; 
+    // }
 
     return true;
 }
@@ -143,7 +158,7 @@ bool RenderClass::CompileShaders() {
     return true;
 }
 
-bool RenderClass::LoadTexture() {
+bool RenderClass::LoadTestTexture() {
     std::string TextureFile = "assets\\wood_container.jpg";
 
     int TexWidth, TexHeight, TexChannels;
@@ -167,3 +182,66 @@ bool RenderClass::LoadTexture() {
     return true;
 }
 
+bool RenderClass::LoadRaytexture() {
+    glGenTextures(1, &m_RayTexture); //Create texture array (we create only one teture)
+    glActiveTexture(GL_TEXTURE0); //Select first  texture in array (we have only one texture in array)
+    glBindTexture(GL_TEXTURE_2D, m_RayTexture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_RayTextWidth, m_RayTextHeight, 0, GL_RGBA, GL_FLOAT, NULL);
+    glBindImageTexture(0, m_RayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+    return true;
+}
+
+void RenderClass::GetComputeWorkSize() {
+    int WorkGrpCount[3];
+    glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 0, &WorkGrpCount[0]);
+    glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 1, &WorkGrpCount[1]);
+    glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 2, &WorkGrpCount[2]);
+    printf("max global (total) work group counts x:%i y:%i z:%i\n", WorkGrpCount[0], WorkGrpCount[1], WorkGrpCount[2]);
+}
+
+bool RenderClass::CompileRayShader() {
+    std::string ComputeGLSLCode = LoadFileToString("shaders\\Compute.glsl");
+    if (ComputeGLSLCode.empty()) {
+        printf("Compute shader GLSL string is empty.\n");
+        return false;
+    }
+    GLuint CompShaderObj = glCreateShader(GL_COMPUTE_SHADER);  //Cretae Shader Object
+    if (CompShaderObj == 0) {
+        printf("Error: Can not create compute shader object.\n");
+        return false;
+    }
+    const char* ComputeShaderCode =  ComputeGLSLCode.c_str();
+    glShaderSource(CompShaderObj, 1, &ComputeShaderCode, NULL);
+    glCompileShader(CompShaderObj); //Compile shader code nad check success
+    GLint IsSuccess;
+    glGetShaderiv(CompShaderObj, GL_COMPILE_STATUS, &IsSuccess);
+    if (!IsSuccess) {
+        GLchar InfoLog[1024];
+        glGetShaderInfoLog(CompShaderObj, 1024, NULL, InfoLog);
+        printf("Error compiling compute shader '%s'\n", InfoLog);
+        return false;
+    }
+
+    //Shader progrm
+    m_RayProgram = glCreateProgram();
+    glAttachShader(m_RayProgram, CompShaderObj); //Attach shader to program
+    glLinkProgram(m_RayProgram);
+    glGetProgramiv(m_RayProgram, GL_LINK_STATUS, &IsSuccess);
+    if (!IsSuccess) {
+        GLchar InfoLog[1024];
+        printf("Error linking ray program: '%s'\n", InfoLog);
+        return false;    
+    }
+    glDeleteShader(CompShaderObj);
+    
+    return true;
+}
+
+
+RenderClass::RenderClass() {}
+RenderClass::RenderClass(const RenderClass&) {}
+RenderClass::~RenderClass() {}

@@ -19,7 +19,11 @@ private:
     void CreateDisplaySqr();
     std::string LoadFileToString(std::string FileName);
     bool CompileShaders();
-    bool LoadTexture();
+    bool LoadTestTexture();
+    bool LoadRaytexture();
+    void GetComputeWorkSize();
+    bool CompileRayShader();
+
     
     GLFWwindow* m_MainWindow = nullptr;
     GLuint m_VAO;
@@ -27,6 +31,11 @@ private:
     GLuint m_EBO;
     GLuint m_ShaderProgram;
     GLuint m_TestTexture;
+
+    uint16_t m_RayTextWidth = 512;
+    uint16_t m_RayTextHeight = 512;
+    GLuint m_RayTexture;
+    GLuint m_RayProgram;
     
 
 };
