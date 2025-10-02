@@ -5,9 +5,9 @@ layout(rgba32f, binding = 0) uniform image2D img_output;
 void main() {
     vec4 pixel = vec4(0.5, 0.5, 0.5, 1.0); // base pixel colour for image
     ivec2 pixel_coords = ivec2(gl_GlobalInvocationID.xy); // get index in global work group i.e x,y position
-    if (pixel_coords.x > 250)
-    {
-        pixel = vec4(0.5, 0.0, 0.0, 1.0);
-    } 
+    //if (pixel_coords.x > 250)
+    //{
+    //    pixel = vec4(0.5, 0.0, 0.0, 1.0);
+    //} 
     imageStore(img_output, pixel_coords, pixel); // output to a specific pixel in the image
 }

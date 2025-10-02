@@ -18,7 +18,7 @@ void RenderClass::Render() {
     //glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_RayTexture);
     glDispatchCompute((GLuint)m_RayTextWidth , (GLuint)m_RayTextHeight, 1);
-    glMemoryBarrier(GL_ALL_BARRIER_BITS); // make sure writing to image has finished before read
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT); // make sure writing to image has finished before read
     
     //Render
     glClear(GL_COLOR_BUFFER_BIT);
@@ -52,6 +52,8 @@ bool RenderClass::Init(GLFWwindow* MainWindow) {
     
     LoadRaytexture();
     CreateDisplaySqr();
+    GetWorkGroupSize();
+    
     return true;
 }
 
@@ -241,6 +243,20 @@ bool RenderClass::CompileRayShader() {
     return true;
 }
 
+void RenderClass::GetWorkGroupSize() {
+    int WorkGroupSize[3] = {0};
+    glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 0, &WorkGroupSize[0]);
+    glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 1, &WorkGroupSize[1]);
+    glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 2, &WorkGroupSize[2]);
+
+    int WorkGroupCount[3] = { 0 };
+    glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 0, &WorkGroupCount[0]);
+    glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 1, &WorkGroupCount[1]);
+    glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 2, &WorkGroupCount[2]);
+
+    printf("WorkGroup Size %u, %u, %u.\n", WorkGroupSize[0], WorkGroupSize[1], WorkGroupSize[2]);
+    printf("WorkGroup Count %u, %u, %u.\n", WorkGroupCount[0], WorkGroupCount[1], WorkGroupCount[2]);
+}
 
 RenderClass::RenderClass() {}
 RenderClass::RenderClass(const RenderClass&) {}
