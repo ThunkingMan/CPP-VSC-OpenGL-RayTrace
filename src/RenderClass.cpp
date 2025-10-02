@@ -16,7 +16,7 @@ void RenderClass::Render() {
     //Compute Shader
     glUseProgram(m_RayProgram);
     //glActiveTexture(GL_TEXTURE0);
-    //glBindTexture(GL_TEXTURE_2D, m_RayTexture);
+    glBindTexture(GL_TEXTURE_2D, m_RayTexture);
     glDispatchCompute((GLuint)m_RayTextWidth , (GLuint)m_RayTextHeight, 1);
     glMemoryBarrier(GL_ALL_BARRIER_BITS); // make sure writing to image has finished before read
     
@@ -24,8 +24,9 @@ void RenderClass::Render() {
     glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(m_ShaderProgram);
     glBindVertexArray(m_VAO);
-    glActiveTexture(GL_TEXTURE0);
+    //glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_RayTexture);
+    //glBindTexture(GL_TEXTURE_2D, m_RayTexture);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glfwSwapBuffers(m_MainWindow);
 }
@@ -33,25 +34,24 @@ void RenderClass::Render() {
 bool RenderClass::Init(GLFWwindow* MainWindow) {
     m_MainWindow = MainWindow;
 
-    // if(! CompileShaders()) {
-    //     printf("Error compiling shaders.\n");
-    //     return false;        
-    // }
+    if(! CompileShaders()) {
+        printf("Error compiling shaders.\n");
+        return false;        
+    }
 
     if (! CompileRayShader()) {
         printf("Error compiling compute shader.\n");
         return false;      
     }
 
-    LoadRaytexture();
-
-    CreateDisplaySqr();
+    if (! LoadTestTexture()) {
+         printf("Error loading shaders.\n");
+         return false; 
+    }
     
-    // if (! LoadTestTexture()) {
-    //     printf("Error loading shaders.\n");
-    //     return false; 
-    // }
-
+    
+    LoadRaytexture();
+    CreateDisplaySqr();
     return true;
 }
 
@@ -168,14 +168,14 @@ bool RenderClass::LoadTestTexture() {
         printf("Error loading texture data from file.\n");
         return false;    
     }
-    glGenTextures(1, &m_TestTexture); //Generate texture array
-    glBindTexture(GL_TEXTURE_2D, m_TestTexture); //Bind the texture
+    glGenTextures(1, &m_TestTexture); //Generate texture array - only one texture here
+    glBindTexture(GL_TEXTURE_2D, m_TestTexture); //Bind the texture for modifications below
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, TexWidth, TexHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, TexData);
-    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, TexWidth, TexHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, TexData); //Upload image data to bound texture
+    glGenerateMipmap(GL_TEXTURE_2D); //generate mipmaps for bound texture
     
     stbi_image_free(TexData); //free the image data loaded from file
     
@@ -184,7 +184,7 @@ bool RenderClass::LoadTestTexture() {
 
 bool RenderClass::LoadRaytexture() {
     glGenTextures(1, &m_RayTexture); //Create texture array (we create only one teture)
-    glActiveTexture(GL_TEXTURE0); //Select first  texture in array (we have only one texture in array)
+    //glActiveTexture(GL_TEXTURE0); //Select first  texture in array (we have only one texture in array)
     glBindTexture(GL_TEXTURE_2D, m_RayTexture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
