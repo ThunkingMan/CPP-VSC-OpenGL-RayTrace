@@ -17,7 +17,7 @@ void RenderClass::Render() {
     glUseProgram(m_RayProgram);
     //glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_RayTexture);
-    glDispatchCompute((GLuint)m_RayTextWidth , (GLuint)m_RayTextHeight, 1);
+    glDispatchCompute((GLuint)m_RayTextWidth, (GLuint)m_RayTextHeight, 1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT); // make sure writing to image has finished before read
     
     //Render
@@ -192,7 +192,7 @@ bool RenderClass::LoadRaytexture() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_RayTextWidth, m_RayTextHeight, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_RayTextWidth, m_RayTextHeight, 0, GL_RGBA, GL_FLOAT, NULL); //Upload texture iamge data
     glBindImageTexture(0, m_RayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
     return true;
 }
