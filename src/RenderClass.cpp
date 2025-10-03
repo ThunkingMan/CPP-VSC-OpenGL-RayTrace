@@ -18,7 +18,7 @@ void RenderClass::Render() {
     //glActiveTexture(GL_TEXTURE0);
     //glBindTexture(GL_TEXTURE_2D, m_RayTexture);
     //glBindImageTexture(0, m_RayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F); //Bind Image
-    glDispatchCompute((GLuint)m_RayTextWidth / 2, (GLuint)m_RayTextHeight / 2, 1);
+    glDispatchCompute((GLuint)m_RayTextWidth / 4, (GLuint)m_RayTextHeight / 4, 1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT); // make sure writing to image has finished before read
     //glBindImageTexture(0, 0, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F); //unbind image
     
