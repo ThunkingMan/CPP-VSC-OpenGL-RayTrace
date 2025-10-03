@@ -21,7 +21,6 @@ private:
     bool CompileShaders();
     bool LoadTestTexture();
     bool LoadRaytexture();
-    void GetComputeWorkSize();
     bool CompileRayShader();
     void GetWorkGroupSize();
 
@@ -33,8 +32,8 @@ private:
     GLuint m_ShaderProgram;
     GLuint m_TestTexture;
 
-    uint16_t m_RayTextWidth = 512;
-    uint16_t m_RayTextHeight = 512;
+    uint16_t m_RayTextWidth = 1500;
+    uint16_t m_RayTextHeight = 1000;
     GLuint m_RayTexture;
     GLuint m_RayProgram;
     

@@ -27,8 +27,8 @@ private:
     std::unique_ptr<TimerClass> c_Timer;
     std::unique_ptr<InputClass> c_Input;
     
-    uint16_t m_MainWindowWidth = 512;
-    uint16_t m_MainWindowHeight = 512;
+    uint16_t m_MainWindowWidth = 1500;
+    uint16_t m_MainWindowHeight = 1000;
     GLFWwindow* m_MainWindow = nullptr;
     int32_t m_FrameBufferHeight = 0;
     int32_t m_FrameBufferWidth = 0;

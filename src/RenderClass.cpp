@@ -17,7 +17,7 @@ void RenderClass::Render() {
     glUseProgram(m_RayProgram);
     //glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_RayTexture);
-    glDispatchCompute((GLuint)m_RayTextWidth, (GLuint)m_RayTextHeight, 1);
+    glDispatchCompute((GLuint)m_RayTextWidth / 4, (GLuint)m_RayTextHeight / 4, 1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT); // make sure writing to image has finished before read
     
     //Render
@@ -52,7 +52,7 @@ bool RenderClass::Init(GLFWwindow* MainWindow) {
     
     LoadRaytexture();
     CreateDisplaySqr();
-    GetWorkGroupSize();
+    //GetWorkGroupSize();
     
     return true;
 }
@@ -195,14 +195,6 @@ bool RenderClass::LoadRaytexture() {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_RayTextWidth, m_RayTextHeight, 0, GL_RGBA, GL_FLOAT, NULL); //Upload texture iamge data
     glBindImageTexture(0, m_RayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
     return true;
-}
-
-void RenderClass::GetComputeWorkSize() {
-    int WorkGrpCount[3];
-    glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 0, &WorkGrpCount[0]);
-    glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 1, &WorkGrpCount[1]);
-    glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_COUNT, 2, &WorkGrpCount[2]);
-    printf("max global (total) work group counts x:%i y:%i z:%i\n", WorkGrpCount[0], WorkGrpCount[1], WorkGrpCount[2]);
 }
 
 bool RenderClass::CompileRayShader() {
