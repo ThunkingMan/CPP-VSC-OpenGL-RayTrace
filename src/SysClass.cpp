@@ -7,8 +7,8 @@
 void SysClass::Loop() {
     while (!glfwWindowShouldClose(m_MainWindow))
     {
-        c_Timer->GetDeltaTime(); //Get time since last frame
-        printf("%u\n", c_Timer->m_FrameDeltaMS);
+        //c_Timer->GetDeltaTime(); //Get time since last frame
+        //printf("%u\n", c_Timer->m_FrameDeltaMS);
         //c_Input->Process(c_Timer->m_FrameDeltaMS); //process input update view.
         c_Render->Render();
         glfwPollEvents(); //Poll for and process events
@@ -98,10 +98,10 @@ bool SysClass::InitClasses() {
         std::printf("Error initialising Render Class.\n");
      	return false;    
     }
-    if (! c_Timer->Init()) {
-        std::printf("Error initialising Timer Class.\n");
-     	return false;    
-    }
+    //if (! c_Timer->Init()) {
+    //    std::printf("Error initialising Timer Class.\n");
+    // 	return false;    
+    //}
        
     return true;   
 }

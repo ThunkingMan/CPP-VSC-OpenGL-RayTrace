@@ -32,8 +32,8 @@ private:
     GLuint m_ShaderProgram;
     GLuint m_TestTexture;
 
-    uint16_t m_RayTextWidth = 1500;
-    uint16_t m_RayTextHeight = 1000;
+    uint16_t m_RayTextWidth = 500;
+    uint16_t m_RayTextHeight = 500;
     GLuint m_RayTexture;
     GLuint m_RayProgram;
     

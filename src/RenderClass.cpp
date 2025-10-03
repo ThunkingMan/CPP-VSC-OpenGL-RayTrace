@@ -16,18 +16,20 @@ void RenderClass::Render() {
     //Compute Shader
     glUseProgram(m_RayProgram);
     //glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_RayTexture);
-    glDispatchCompute((GLuint)m_RayTextWidth / 4, (GLuint)m_RayTextHeight / 4, 1);
+    //glBindTexture(GL_TEXTURE_2D, m_RayTexture);
+    //glBindImageTexture(0, m_RayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F); //Bind Image
+    glDispatchCompute((GLuint)m_RayTextWidth / 2, (GLuint)m_RayTextHeight / 2, 1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT); // make sure writing to image has finished before read
+    //glBindImageTexture(0, 0, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F); //unbind image
     
     //Render
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glUseProgram(m_ShaderProgram);
     glBindVertexArray(m_VAO);
-    //glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_RayTexture);
-    //glBindTexture(GL_TEXTURE_2D, m_RayTexture);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    //glBindTexture(GL_TEXTURE_2D, 0); //unbind texture
     glfwSwapBuffers(m_MainWindow);
 }
 
@@ -61,10 +63,10 @@ void RenderClass::CreateDisplaySqr() {
     //Create square for display of raytrace texture
     
     VertexPosTex Vertex[4] = {
-        VertexPosTex(glm::vec3(-1.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f)), //vert - top left
-        VertexPosTex(glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec2(0.0f, 0.0f)), //vert2 - bottom left
-        VertexPosTex(glm::vec3(1.0f, -1.0f, 0.0f), glm::vec2(1.0f, 0.0f)), //vert3 - Bottom right
-        VertexPosTex(glm::vec3(1.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f)) //vert4 - top right
+        VertexPosTex(glm::vec3(-1.0f, 1.0f, 0.0f), glm::vec2(0.0f, 0.0f)), //vert - top left
+        VertexPosTex(glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec2(0.0f, 1.0f)), //vert2 - bottom left
+        VertexPosTex(glm::vec3(1.0f, -1.0f, 0.0f), glm::vec2(1.0f, 1.0f)), //vert3 - Bottom right
+        VertexPosTex(glm::vec3(1.0f, 1.0f, 0.0f), glm::vec2(1.0f, 0.0f)) //vert4 - top right
     };
     GLuint Index[] = {0, 1, 2, 2, 3, 0}; //Index data
 
@@ -76,7 +78,7 @@ void RenderClass::CreateDisplaySqr() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex), Vertex, GL_STATIC_DRAW); //Upload vertex data
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), 0); //Attribute 0 Vertex Position
     glEnableVertexAttribArray(0); //enable array atribute 0
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(3*sizeof(float))); //Attribute 1 texture position
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(3*sizeof(float))); //Attribute 1 texture position
     glEnableVertexAttribArray(1); //enable array atribute 1
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO); //bind index buffer
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Index), Index, GL_STATIC_DRAW); //Upload index data
@@ -161,7 +163,7 @@ bool RenderClass::CompileShaders() {
 }
 
 bool RenderClass::LoadTestTexture() {
-    std::string TextureFile = "assets\\wood_container.jpg";
+    std::string TextureFile = "assets\\wood_container1.jpg";
 
     int TexWidth, TexHeight, TexChannels;
     unsigned char *TexData = nullptr;
@@ -186,14 +188,14 @@ bool RenderClass::LoadTestTexture() {
 
 bool RenderClass::LoadRaytexture() {
     glGenTextures(1, &m_RayTexture); //Create texture array (we create only one teture)
-    //glActiveTexture(GL_TEXTURE0); //Select first  texture in array (we have only one texture in array)
+    glActiveTexture(GL_TEXTURE0); //Select first  texture in array (we have only one texture in array)
     glBindTexture(GL_TEXTURE_2D, m_RayTexture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_RayTextWidth, m_RayTextHeight, 0, GL_RGBA, GL_FLOAT, NULL); //Upload texture iamge data
-    glBindImageTexture(0, m_RayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+    glBindImageTexture(0, m_RayTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
     return true;
 }
 
