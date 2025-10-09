@@ -13,23 +13,25 @@ struct VertexPosTex {
 };
 
 void RenderClass::Render() {
+    //Global GL settings - Can this be moved outside the loop??
+    glActiveTexture(GL_TEXTURE0);
+    glBindImageTexture(0, m_RayTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F); //Bind Image for compute shader output
+    glBindTexture(GL_TEXTURE_2D, m_RayTexture); //Bind texture for render input
+    int UniLocImageSize  = glGetUniformLocation(m_RayProgram, "u_ImageCentre");
+        
     //Compute Shader
     glUseProgram(m_RayProgram);
-    //glActiveTexture(GL_TEXTURE0);
-    //glBindTexture(GL_TEXTURE_2D, m_RayTexture);
-    //glBindImageTexture(0, m_RayTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F); //Bind Image
+    glUniform2i(UniLocImageSize, m_RayTextWidth / 2, m_RayTextHeight / 2);
     glDispatchCompute((GLuint)m_RayTextWidth / 4, (GLuint)m_RayTextHeight / 4, 1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT); // make sure writing to image has finished before read
-    //glBindImageTexture(0, 0, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F); //unbind image
-    
+        
     //Render
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glUseProgram(m_ShaderProgram);
     glBindVertexArray(m_VAO);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_RayTexture);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     //glBindTexture(GL_TEXTURE_2D, 0); //unbind texture
+    
     glfwSwapBuffers(m_MainWindow);
 }
 
@@ -195,7 +197,7 @@ bool RenderClass::LoadRaytexture() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_RayTextWidth, m_RayTextHeight, 0, GL_RGBA, GL_FLOAT, NULL); //Upload texture iamge data
-    glBindImageTexture(0, m_RayTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+    //glBindImageTexture(0, m_RayTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
     return true;
 }
 
@@ -250,6 +252,12 @@ void RenderClass::GetWorkGroupSize() {
 
     printf("WorkGroup Size %u, %u, %u.\n", WorkGroupSize[0], WorkGroupSize[1], WorkGroupSize[2]);
     printf("WorkGroup Count %u, %u, %u.\n", WorkGroupCount[0], WorkGroupCount[1], WorkGroupCount[2]);
+}
+
+bool RenderClass::CreateSSBO() {
+    glGenBuffers(1, &m_SSBO);
+    glBufferData(m_SSBO, 262144, NULL, GL_DYNAMIC_READ); //size 64x64x64 bytes
+    return true;
 }
 
 RenderClass::RenderClass() {}

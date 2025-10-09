@@ -23,6 +23,7 @@ private:
     bool LoadRaytexture();
     bool CompileRayShader();
     void GetWorkGroupSize();
+    bool CreateSSBO();
 
     
     GLFWwindow* m_MainWindow = nullptr;
@@ -31,9 +32,10 @@ private:
     GLuint m_EBO;
     GLuint m_ShaderProgram;
     GLuint m_TestTexture;
+    GLuint m_SSBO;
 
-    uint16_t m_RayTextWidth = 1500;
-    uint16_t m_RayTextHeight = 1000;
+    uint16_t m_RayTextWidth = 800;
+    uint16_t m_RayTextHeight = 800;
     GLuint m_RayTexture;
     GLuint m_RayProgram;
     
