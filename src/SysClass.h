@@ -24,8 +24,8 @@ private:
     void Loop();
 
     std::unique_ptr<RenderClass> c_Render;
-    std::unique_ptr<TimerClass> c_Timer;
     std::unique_ptr<InputClass> c_Input;
+    std::unique_ptr<TimerClass> c_Timer;
     
     uint16_t m_MainWindowWidth = 800;
     uint16_t m_MainWindowHeight = 800;

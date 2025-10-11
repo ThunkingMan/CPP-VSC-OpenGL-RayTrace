@@ -5,7 +5,7 @@ InputClass::InputClass() {}
 InputClass::InputClass(const InputClass&) {}
 InputClass::~InputClass() {}
 
-void InputClass::Init(GLFWwindow* MainWindow) {
+void InputClass::Init(GLFWwindow* MainWindow, uint16_t m_mainWidowWidth, uint16_t m_MainWindowHeight) {
     m_MainWindow = MainWindow; //Store main window pointer in class
     m_Position = glm::vec3(0.0f, 0.0f, 0.0f);
     m_Look = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -42,7 +42,7 @@ void InputClass::ProcessInput(unsigned _int16 FrameDeltaMS) {
     RotationMatrix = glm::rotate(m_IdentMatrix, Roll, m_Look);
     TmpVec4 = RotationMatrix * glm::vec4(m_Up, 1.0f);
     m_Up = glm::normalize(glm::vec3(TmpVec4)); //Rotate up vector
-    m_Right = glm::cross();
+    //m_Right = glm::cross();
 
     
     //Movement

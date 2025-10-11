@@ -10,7 +10,7 @@ public:
     InputClass();
     InputClass(const InputClass&);
     ~InputClass();
-    void Init(GLFWwindow* MainWindow);
+    void Init(GLFWwindow* MainWindow, uint16_t m_mainWidowWidth, uint16_t m_MainWindowHeight);
     void ProcessInput(unsigned _int16 FrameDeltaMS);
 
     glm::vec3 m_Position;
