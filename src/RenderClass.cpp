@@ -21,8 +21,8 @@ void RenderClass::Render() {
         
     //Compute Shader
     glUseProgram(m_RayProgram);
-    glUniform2i(UniLocImageSize, m_RayTextWidth / 2, m_RayTextHeight / 2);
-    glDispatchCompute((GLuint)m_RayTextWidth / 4, (GLuint)m_RayTextHeight / 4, 1);
+    glUniform2i(UniLocImageSize, m_MainWindowWidth / 2, m_MainWindowHeight / 2);
+    glDispatchCompute((GLuint)m_MainWindowWidth / 4, (GLuint)m_MainWindowHeight / 4, 1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT); // make sure writing to image has finished before read
         
     //Render
@@ -35,8 +35,10 @@ void RenderClass::Render() {
     glfwSwapBuffers(m_MainWindow);
 }
 
-bool RenderClass::Init(GLFWwindow* MainWindow) {
+bool RenderClass::Init(GLFWwindow* MainWindow, uint16_t MainWindowWidth, uint16_t MainWindowHeight) {
     m_MainWindow = MainWindow;
+    m_MainWindowWidth = MainWindowWidth;
+    m_MainWindowHeight = MainWindowHeight;
 
     if(! CompileShaders()) {
         printf("Error compiling shaders.\n");
@@ -196,7 +198,7 @@ bool RenderClass::LoadRaytexture() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_RayTextWidth, m_RayTextHeight, 0, GL_RGBA, GL_FLOAT, NULL); //Upload texture iamge data
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_MainWindowWidth, m_MainWindowHeight, 0, GL_RGBA, GL_FLOAT, NULL); //Upload texture iamge data
     //glBindImageTexture(0, m_RayTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
     return true;
 }
@@ -256,7 +258,7 @@ void RenderClass::GetWorkGroupSize() {
 
 bool RenderClass::CreateSSBO() {
     glGenBuffers(1, &m_SSBO);
-    glBufferData(m_SSBO, 262144, NULL, GL_DYNAMIC_READ); //size 64x64x64 bytes
+    glBufferData(m_SSBO, 512, NULL, GL_DYNAMIC_READ); //size 8x8x8 bytes
     return true;
 }
 

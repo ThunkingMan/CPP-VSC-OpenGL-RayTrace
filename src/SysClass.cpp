@@ -94,7 +94,7 @@ bool SysClass::InitClasses() {
 	}
 
     //Class Inits
-    if(! c_Render->Init(m_MainWindow)) {
+    if(! c_Render->Init(m_MainWindow, m_MainWindowWidth, m_MainWindowHeight)) {
         std::printf("Error initialising Render Class.\n");
      	return false;    
     }
