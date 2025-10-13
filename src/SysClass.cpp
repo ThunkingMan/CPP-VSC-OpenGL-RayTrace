@@ -9,7 +9,7 @@ void SysClass::Loop() {
     {
         c_Timer->GetDeltaTime(); //Get time since last frame
         c_Input->ProcessInput(c_Timer->m_FrameDeltaMS); //process input update view.
-        c_Render->Render();
+        c_Render->Render(c_Input->m_Look);
         glfwPollEvents(); //Poll for and process events
     }
 }

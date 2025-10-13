@@ -27,4 +27,6 @@ private:
     float m_MoveSpeed = 0.005f; //Move speed (meters per ms) - Human run speed approx 5m/s;
     float m_RotateSpeed;
     glm::mat4 m_IdentMatrix = glm::mat4(1.0f);
+
+    float m_YawRads = 0; //Rotation around Y Axis 
 };

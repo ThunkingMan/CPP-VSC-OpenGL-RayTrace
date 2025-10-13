@@ -1,5 +1,4 @@
 #include "RenderClass.h"
-#include "glm\glm.hpp"
 #include <fstream>
 #include <sstream>
 #include "stb_image.h"
@@ -12,16 +11,19 @@ struct VertexPosTex {
     VertexPosTex(glm::vec3 _Pos, glm::vec2 _Tex) {Pos = _Pos; Tex = _Tex;}
 };
 
-void RenderClass::Render() {
+void RenderClass::Render(glm::vec3 Look) {
     //Global GL settings - Can this be moved outside the loop??
     glActiveTexture(GL_TEXTURE0);
     glBindImageTexture(0, m_RayTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F); //Bind Image for compute shader output
     glBindTexture(GL_TEXTURE_2D, m_RayTexture); //Bind texture for render input
     int UniLocImageSize  = glGetUniformLocation(m_RayProgram, "u_ImageCentre");
+    int UniLocLook  = glGetUniformLocation(m_RayProgram, "u_Look");
         
     //Compute Shader
     glUseProgram(m_RayProgram);
-    glUniform2i(UniLocImageSize, m_MainWindowWidth / 2, m_MainWindowHeight / 2);
+    glUniform2i(UniLocImageSize, m_MainWindowXCnt, m_MainWindowYCnt); //Send image centre to shader
+    //glUniform3fv(UniLocLook, 1, (GLfloat*)&Look); //send look vector to shader
+    glUniform3f(UniLocLook, Look.x, Look.y, 0.0f);
     glDispatchCompute((GLuint)m_MainWindowWidth / 4, (GLuint)m_MainWindowHeight / 4, 1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT); // make sure writing to image has finished before read
         
@@ -39,6 +41,8 @@ bool RenderClass::Init(GLFWwindow* MainWindow, uint16_t MainWindowWidth, uint16_
     m_MainWindow = MainWindow;
     m_MainWindowWidth = MainWindowWidth;
     m_MainWindowHeight = MainWindowHeight;
+    m_MainWindowXCnt = MainWindowWidth / 2; //Calc main window centre
+    m_MainWindowYCnt = MainWindowHeight / 2;
 
     if(! CompileShaders()) {
         printf("Error compiling shaders.\n");
@@ -258,7 +262,7 @@ void RenderClass::GetWorkGroupSize() {
 
 bool RenderClass::CreateSSBO() {
     glGenBuffers(1, &m_SSBO);
-    glBufferData(m_SSBO, 512, NULL, GL_DYNAMIC_READ); //size 8x8x8 bytes
+    glBufferData(m_SSBO, 512, NULL, GL_DYNAMIC_READ); //8x8x8 - Direction uint(4byte)
     return true;
 }
 
