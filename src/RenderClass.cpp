@@ -16,6 +16,7 @@ void RenderClass::Render(glm::vec3 Look) {
     glActiveTexture(GL_TEXTURE0);
     glBindImageTexture(0, m_RayTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F); //Bind Image for compute shader output
     glBindTexture(GL_TEXTURE_2D, m_RayTexture); //Bind texture for render input
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_SSBO); //Bind Input Data buffer
     int UniLocImageSize  = glGetUniformLocation(m_RayProgram, "u_ImageCentre");
     int UniLocLook  = glGetUniformLocation(m_RayProgram, "u_Look");
         
@@ -261,8 +262,15 @@ void RenderClass::GetWorkGroupSize() {
 }
 
 bool RenderClass::CreateSSBO() {
+    uint8_t BufferData[16] = {}; //16 bytes -> 4 unit32
+    BufferData[0] = 1;
+    BufferData[1] = 1;
+    BufferData[2] = 1;
+    BufferData[3] = 1;
+    
     glGenBuffers(1, &m_SSBO);
-    glBufferData(m_SSBO, 512, NULL, GL_DYNAMIC_READ); //8x8x8 - Direction uint(4byte)
+    glBufferData(m_SSBO, 16, BufferData, GL_DYNAMIC_READ); //16 - Direction uint(4byte)
+
     return true;
 }
 
