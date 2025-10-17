@@ -40,6 +40,8 @@ private:
     
     GLuint m_RayTexture;
     GLuint m_RayProgram;
+
+    
     
 
 };

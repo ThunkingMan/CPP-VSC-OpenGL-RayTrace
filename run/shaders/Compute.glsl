@@ -2,9 +2,23 @@
 layout(local_size_x = 4, local_size_y = 4, local_size_z = 1) in;
 layout(rgba32f, binding = 0) uniform image2D ImageOutput;
 
-layout(std430, binding = 1) buffer InputData {
-    uint  InData[];
+//8x uint - 
+layout(std430, binding = 1) buffer OctreeLeve1 {
+    uint  OctLevel1[];
 };
+
+layout(std430, binding = 2) buffer OctreeLeve2 {
+    uint  OctLevel2[];
+};
+
+layout(std430, binding = 3) buffer OctreeLeve3 {
+    uint  OctLevel3[];
+};
+
+layout(std430, binding = 4) buffer VoxelData {
+    uint  Voxels[];
+};
+
 
 uniform ivec2 u_ImageCentre;
 uniform vec3 u_Look;

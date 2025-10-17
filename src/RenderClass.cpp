@@ -262,14 +262,14 @@ void RenderClass::GetWorkGroupSize() {
 }
 
 bool RenderClass::CreateSSBO() {
-    uint8_t BufferData[16] = {}; //16 bytes -> 4 unit32
-    BufferData[0] = 1;
-    BufferData[1] = 1;
-    BufferData[2] = 1;
-    BufferData[3] = 1;
+    //uint8_t BufferData[4096] = {}; //16 bytes -> 4 unit32
+    //BufferData[0] = 1;
+    //BufferData[1] = 1;
+    //BufferData[2] = 1;
+    //BufferData[3] = 1;
     
     glGenBuffers(1, &m_SSBO);
-    glBufferData(m_SSBO, 16, BufferData, GL_DYNAMIC_READ); //16 - Direction uint(4byte)
+    glBufferData(m_SSBO, 4096, NULL, GL_DYNAMIC_READ); //16 - Direction uint(4byte)
 
     return true;
 }
