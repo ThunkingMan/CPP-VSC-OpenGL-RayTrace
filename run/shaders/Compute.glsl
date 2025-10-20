@@ -39,6 +39,9 @@ void main() {
     if (CoordSum == ImageSize){
         Pixel = vec4(0.25, 0.25, 0.25, 1.0);    
     }
+    if (PixelCoords.x == 0 && PixelCoords.y == 0) {
+        Pixel = vec4(1.0, 0.0, 0.0, 1.0);    
+    }
 
     //View Line
     //int XView = u_ImageCentre.x + int(u_Look.x * 20);
@@ -47,9 +50,9 @@ void main() {
     //    Pixel = vec4(1.0, 0.0, 0.0, 1.0);
     //}
 
-    int XOffset = PixelCoords.x - u_ImageCentre.x;
-    int YOffset = PixelCoords.y - u_ImageCentre.y;
-    int Lookup = 
+    //int XOffset = PixelCoords.x - u_ImageCentre.x;
+    //int YOffset = PixelCoords.y - u_ImageCentre.y;
+    //int Lookup = 
 
 
 

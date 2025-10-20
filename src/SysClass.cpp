@@ -9,6 +9,8 @@ void SysClass::Loop() {
     {
         c_Timer->GetDeltaTime(); //Get time since last frame
         c_Input->ProcessInput(c_Timer->m_FrameDeltaMS); //process input update view.
+        printf("X: %f, Y: %f, Z: %f\n", c_Input->m_Position.x, c_Input->m_Position.y, c_Input->m_Position.z);
+        
         c_Render->Render(c_Input->m_Look);
         glfwPollEvents(); //Poll for and process events
     }

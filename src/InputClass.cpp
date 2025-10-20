@@ -27,11 +27,12 @@ void InputClass::ProcessInput(unsigned _int16 FrameDeltaMS) {
     //glm::vec4 TmpVec4 = RotationMatrix * glm::vec4(m_Look, 1.0f);
     //m_Look = glm::normalize(glm::vec3(TmpVec4)); //Rotate look vector
     //m_Right = glm::cross(m_Look, m_Up); //Re-calc right vector
-    m_YawRads += MouseX / 10000;
-    if (m_YawRads < 0) m_YawRads = (6.2832 - m_YawRads);
-    if (m_YawRads > 6.2832) m_YawRads = (m_YawRads - 6.2832);
-    m_Look.x = glm::sin(m_YawRads);
-    m_Look.y = glm::cos(m_YawRads);
+    
+    //m_YawRads += MouseX / 10000;
+    //if (m_YawRads < 0) m_YawRads = (6.2832 - m_YawRads);
+    //if (m_YawRads > 6.2832) m_YawRads = (m_YawRads - 6.2832);
+    //m_Look.x = glm::sin(m_YawRads);
+    //m_Look.y = glm::cos(m_YawRads);
 
     //Pitch Rotation
     //float Pitch = 0 - MouseY / 10000;
@@ -58,7 +59,7 @@ void InputClass::ProcessInput(unsigned _int16 FrameDeltaMS) {
     if(glfwGetKey(m_MainWindow, GLFW_KEY_A) == GLFW_PRESS) m_Position -= m_Right * FrameMoveDistance;
     if(glfwGetKey(m_MainWindow, GLFW_KEY_D) == GLFW_PRESS) m_Position += m_Right * FrameMoveDistance;
 
-    glm::vec3 CameraLook = m_Position + m_Look;
-    glm::vec3 CameraUp = m_Position + m_Up;
-    m_CameraView = glm::lookAt(m_Position, CameraLook, m_Up);
+    //glm::vec3 CameraLook = m_Position + m_Look;
+    //glm::vec3 CameraUp = m_Position + m_Up;
+    //m_CameraView = glm::lookAt(m_Position, CameraLook, m_Up);
 }
