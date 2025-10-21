@@ -18,28 +18,19 @@ void InputClass::ProcessInput(unsigned _int16 FrameDeltaMS) {
     //Mouse movement.
     double MouseX, MouseY;
     glfwGetCursorPos(m_MainWindow, &MouseX, &MouseY); 
-    //printf("Mouse: %f, %f\n", MouseX, MouseY);
     glfwSetCursorPos(m_MainWindow, 0, 0);
     
     //Yaw rotataion    
-    //float Yaw = 0 - MouseX / 10000; 
-    //glm::mat4 RotationMatrix = glm::rotate(m_IdentMatrix, Yaw, m_Up);
-    //glm::vec4 TmpVec4 = RotationMatrix * glm::vec4(m_Look, 1.0f);
-    //m_Look = glm::normalize(glm::vec3(TmpVec4)); //Rotate look vector
-    //m_Right = glm::cross(m_Look, m_Up); //Re-calc right vector
-    
-    //m_YawRads += MouseX / 10000;
-    //if (m_YawRads < 0) m_YawRads = (6.2832 - m_YawRads);
-    //if (m_YawRads > 6.2832) m_YawRads = (m_YawRads - 6.2832);
-    //m_Look.x = glm::sin(m_YawRads);
-    //m_Look.y = glm::cos(m_YawRads);
-
+    float Yaw = 0 - MouseX / 10000; 
+    glm::mat4 YawRotationMat= glm::rotate(m_IdentMatrix, Yaw, m_Up);
     //Pitch Rotation
-    //float Pitch = 0 - MouseY / 10000;
-    //RotationMatrix = glm::rotate(m_IdentMatrix, Pitch, m_Right);
-    //TmpVec4 = RotationMatrix * glm::vec4(m_Up, 1.0f);
-    //m_Up = glm::normalize(glm::vec3(TmpVec4)); //Rotate up vector
-    //m_Look = glm::cross(m_Up, m_Right); //Re-calc right vector
+    float Pitch = 0 - MouseY / 10000;
+    glm::mat4 PitchYawRotationMat = glm::rotate(YawRotationMat, Pitch, m_Right);
+    glm::vec4 TmpLook = PitchYawRotationMat * glm::vec4(m_Look, 1.0f);
+    m_Look = glm::normalize(glm::vec3(TmpLook));
+    glm::vec4 TmpUp = PitchYawRotationMat * glm::vec4(m_Up, 1.0f);
+    m_Up = glm::normalize(glm::vec3(m_Up));
+    m_Right = glm::cross(m_Look, m_Up); //Re-calc right vector
 
     //Roll
     //float Roll = 0;

@@ -21,9 +21,18 @@ layout(std430, binding = 4) buffer VoxelData {
 
 
 uniform ivec2 u_ImageCentre;
+uniform vec3 u_Position;
 uniform vec3 u_Look;
+uniform vec3 u_HorzFov;
+uniform vec3 u_VertFov;
 
 void main() {
+    //Calc look position
+    vec3 LookPos = u_Position + u_Look;
+
+    //Calc FOV Multipliers
+
+    
     vec4 Pixel = vec4(0.5, 0.5, 0.5, 1.0); // base pixel colour for image
     ivec2 PixelCoords = ivec2(gl_GlobalInvocationID.xy); // get index in global work group i.e x,y position - convert to ivec for imageStore function
     
